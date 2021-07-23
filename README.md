@@ -1,5 +1,7 @@
 # Wake PC
 
+![screenshot](https://github.com/szabodanika/wake-pc/blob/master/readme-header.png)
+
 ## How to set up
 
 ### 1. Install Wake PC
