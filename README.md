@@ -1,5 +1,7 @@
 # Wake PC
 
+Wake PC is a super tiny password protected PHP webapp that sends WOL packets to other machines. Currently it supports a single machine but I plan to add a config GUI and option to add a list of machines that can be WOL-ed separately.
+
 ![screenshot](https://github.com/szabodanika/wake-pc/blob/master/readme-header.png)
 
 ## How to set up
