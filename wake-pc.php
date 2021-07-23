@@ -7,16 +7,18 @@
 	} else {
 		// config.ini read successfully, let's break it up to sections
 		$connection = $config['connection'];
-		$customStrings = $config['customization'];
+		$customization = $config['customization'];
 		// ping pc
 		$waitTimeoutInSeconds = 1; 
-		$online = fsockopen($connection['host'],$connection['port'],$errCode,$errStr,$waitTimeoutInSeconds);
+		$online = fsockopen($connection['host'],$connection['pingport'],$errCode,$errStr,$waitTimeoutInSeconds);
 		// check password
 		if(isset($_GET['pwd'])) {
 			$pwd = $_GET['pwd'];
-			if($pwd == $connection['password']){
+			if($pwd == $customization['password']){
 				// password ok, lets send WOL
-				$status =  shell_exec('wakeonlan -i '.$connection['host'].' '.$connection['mac'].' 2>&1; echo $?');
+				$result = shell_exec("echo -e $(echo $(printf 'f%.0s' {1..12}; printf \"$(echo ".$connection['mac']." | sed 's/://g')%.0s\" {1..16}) | sed -e 's/../\\\\x&/g') | nc -w1 -u -b ".$connection['broadcast']." ".$connection['wolport'].' 2>&1; echo $?');
+				// check the status code of the above command
+				$status = trim($result) == "0" ? 'WOL packet sent to '.$customization['pcname'] : 'Failed to send WOL packet.';
 			} else $status =  'Incorrect password';
 		} else $status = 'Please enter the password';
 	}
@@ -27,12 +29,12 @@
   <meta http-equiv="content-type" content="text/html;charset=utf-8" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wake <?=$customStrings['pcname']?></title>
+  <title>Wake <?=$customization['pcname']?></title>
 </head>
 <body >
 <div class="card" style="max-width:240px; margin:auto; margin-top: 2em">
 	<div class="card-body">
-		<h5 class="card-title">Wake <?=$customStrings['pcname']?> </h5>
+		<h5 class="card-title">Wake <?=$customization['pcname']?> </h5>
 		<form name="input" action="" method="get">
 		<div class="form-group">
 			<label for="pwd">Password</label>
