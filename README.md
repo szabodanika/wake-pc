@@ -18,3 +18,9 @@ For WOL to work it needs ot be enabled on the target PC, by default this is usua
 You also need to make sure that the machine will only be woken up by WOL packets and nothing else, otherwise the initial ping that checks whether the machine is online will also turn it on.
 
 Go in Control Panel\All Control Panel Items\Network Connections, select your connection -> right click -> Properties -> Power Management, tick "Allow this device to wake the computer" and make sure to also tick "Only allow a magic packet to wake the computer".
+
+
+## Planned Improvements
+- remove plaintext password haha
+- gui config
+- multiple machines
