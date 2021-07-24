@@ -23,7 +23,6 @@ Go in Control Panel\All Control Panel Items\Network Connections, select your con
 ## Planned Improvements
 - remove plaintext password haha
 - gui config
-- multiple machines
 - scheduling
 - shutdown and reboot maybe?
 - ability to disable ping
