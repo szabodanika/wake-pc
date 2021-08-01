@@ -13,7 +13,7 @@ if (($config = parse_ini_file("config.ini", true)) == false) {
 	$pcSelected = isset($_GET['pc']) ? $_GET['pc'] : array_key_first($config);
 	$pcConfig = $pcConfigs[$pcSelected];
 	// ping PC
-	$online = fsockopen($pcConfig['host'], $pcConfig['pingPort']);
+	$online = fsockopen($pcConfig['host'], $pcConfig['pingPort'],$errno, $errstr, $globalConfig["pingTimeout"]);
 	// check if we want to wake or just fetching page
 	if (isset($_POST['wake'])) {
 		// check password if needed
