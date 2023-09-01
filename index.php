@@ -3,7 +3,7 @@
 // read config.ini
 if (($config = parse_ini_file("config.ini", true)) == false) {
 	// uh-oh, failed ot read ini file
-	$status = "Missing or corrupt configuration file!";
+	$warning = "Missing or corrupt configuration file!";
 } else {
 	// config.ini read successfully, let's break it up to sections
 	$globalConfig = $config['global'];
@@ -21,10 +21,14 @@ if (($config = parse_ini_file("config.ini", true)) == false) {
 			$pcConfig['password'] == ""
 		) {
 			// password ok/not needed, lets send WOL
-			$result = shell_exec("echo -e $(echo $(printf 'f%.0s' {1..12}; printf \"$(echo " . $pcConfig['mac'] . " | sed 's/://g')%.0s\" {1..16}) | sed -e 's/../\\\\x&/g') | nc -w1 -u -b " . $pcConfig['broadcast'] . " " . $pcConfig['wolPort'] . ' 2>&1; echo $?');
+			$packet = "FFFFFFFFFFFF" . str_repeat($pcConfig['mac'], 16);
+			$result = exec("echo $(printf \"$(echo " . $packet . " | sed 's/://g')%.0s\") | xxd -r -p | nc -w1 -u -b " . $pcConfig['broadcast'] . " " . $pcConfig['wolPort'] . " 2>&1; echo $?");
 			// check the status code of the above command, if 0 say OK otherwise print output
-			$status = trim($result) == "0" ? 'Magic packet sent to ' . $pcConfig['pcName'] : 'Failed to send WOL packet: <pre>' . $result . '</pre>';
-		} else $status =  'Incorrect password';
+			$status = trim($result) == "0" ? 0 : 1;
+		} else $status =  2;
+    	$text = $status == 0 ? 'Magic packet sent to ' . $pcConfig['pcName'] : ( $status == 1 ? 'Failed to send WOL packet: ' . $result : ($status == 2 ? 'Incorrect password' : ''));
+		echo "<script>alert('$text');window.location='./?pc=$pcSelected';</script>";
+		exit();
 	}
 }
 ?>
@@ -75,7 +79,7 @@ if (($config = parse_ini_file("config.ini", true)) == false) {
 					<button class="btn btn-primary btn-block" type="submit" id="wake-btn" name="wake" value="wake"><?= $globalConfig['wakeButtonText'] ?></button>
 				</div>
 			</form>
-			<div class="text-center"><?= $status ?></div>
+			<div class="text-center"><?= $warning ?></div>
 		</div>
 	</div>
 </body>
